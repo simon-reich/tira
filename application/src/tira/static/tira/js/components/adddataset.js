@@ -14,6 +14,7 @@ export default {
             gitRunnerImage: '',
             gitRunnerCommand: '',
             gitRepositoryId: '',
+            useExistingRepo: false,
             taskList: [],
         }
     },
@@ -76,7 +77,8 @@ export default {
                 'is_git_runner': this.isGitRunner,
                 'git_runner_image': this.gitRunnerImage,
                 'git_runner_command': this.gitRunnerCommand,
-                'git_repository_id': this.gitRepositoryId
+                'git_repository_id': this.gitRepositoryId,
+                'use_existing_repository': this.useExistingRepo
             }).then(message => {
                 this.$emit('addnotification', 'success', message.message)
                 this.$emit('adddataset', message.context)
@@ -170,9 +172,15 @@ export default {
         </div>
     </div>
     <div class="uk-margin-right">
-        <h2>Evaluator (when using master VMs)</h2>
+        <h2>Evaluator</h2>
     </div>
-    <div class="uk-grid-small uk-margin-small" uk-grid>
+    <div>
+        <div>
+            <label><input class="uk-radio" type="radio" name="radio3" :value="false" v-model="isGitRunner"> Master VM</label>&nbsp;
+            <label><input class="uk-radio" type="radio" name="radio3" :value="true" v-model="isGitRunner"> Git CI</label>
+        </div>
+    </div>
+    <div v-if="isGitRunner === false" class="uk-grid-small uk-margin-small" uk-grid>
         <div class="uk-width-1-3">
             <label> Evaluator Working Directory
             <input type="text" class="uk-input"
@@ -189,20 +197,17 @@ export default {
                    v-model="selectedTask.master_vm_id" disabled></label>
         </div>
     </div>
-   <div class="uk-margin-right">
-        <h2>Evaluator (when using GIT CI)</h2>
-        <div>
-            <label><input class="uk-checkbox" type="checkbox" name="checkbox-gitci" v-model="isGitCi"> using GitCi</label>
-        </div>
-    </div> 
-    <div class="uk-grid-small uk-margin-small" uk-grid>
-        <div class="uk-width-1-3">
+    <div v-if="isGitRunner === true" class="uk-grid-small uk-margin-small" uk-grid>
+        <div class="uk-width-1-2">
             <label> Image to be run <input type="text" class="uk-input" v-model="gitRunnerImage" /></label>
         </div>
-        <div class="uk-width-1-3">
+        <div class="uk-width-1-2">
             <label>Git Runner Command <input type="text" class="uk-input" v-model="gitRunnerCommand" /></label>
         </div>
-        <div class="uk-width-1-3">
+        <div class="uk-width-1-1">
+            <label><input class="uk-checkbox" type="checkbox" name="checkbox-gitci" v-model="useExistingRepo"> use existing repository</label>
+        </div>
+        <div v-if="useExistingRepo" class="uk-width-1-1">
             <label>Git Repository ID <input type="text" class="uk-input" v-model="gitRepositoryId" ></label>
         </div>
     </div>   
