@@ -1,6 +1,16 @@
 <template>
+<button class="uk-button uk-button-default uk-button-small" :class="{ 'uk-button-primary': !showUploadForm, 'tira-button-selected': showUploadForm}"
+        @click="showUploadForm = true">
+    Add Upload <font-awesome-icon icon="fas fa-folder-plus" /></button>
+<button v-for="run_id in filterUploadRuns"
+        class="uk-button uk-button-default uk-button-small uk-margin-small-horizontal"
+        @click="selectedRunId=run_id ; showUploadForm=false"
+        :class="{ 'tira-button-selected': true }">
+         {{ run_id }} </button>
+
+
 <div class="uk-card uk-card-body uk-card-default uk-card-small">
-<form class="upload_form">
+<form v-if="showUploadForm" class="upload_form">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf }}">
     <div class="uk-grid-medium" uk-grid>
         <div class="uk-width-1-2">
@@ -70,6 +80,7 @@ export default {
     emits: ['addNotification', 'pollEvaluations', 'removeRun'],
     data() {
       return {
+        showUploadForm: true,
         uploadDataset: '',
         uploadFormError: '',
         fileHandle: null,
@@ -119,6 +130,11 @@ export default {
             }
             return this.datasets.filter(k => !k.is_deprecated).map(k => {
                 return [k.dataset_id, k.display_name]
+            })
+        },
+        filterUploadRuns() {
+            return this.upload.runs.filter(k => !k.is_evaluation).map(k => {
+                return [k.run_id]
             })
         }
     },
